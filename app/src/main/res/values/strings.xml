@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">BrainTrainer</string>
+    <string name="app_name_logo">Brain Trainer</string>
+    <string name="final_activity_title">End of the game</string>
+    <string name="settings_activity_title">Settings</string>
+    <string name="score_pointer">Your score</string>
+    <string name="the_best_result_pointer">The best result</string>
+    <string name="new_record">New record</string>
+    <string name="back_button">Back</string>
+    <string name="switch_time">Time duration</string>
+    <string name="switch_count">Correct answers</string>
+    <string name="spinner_answers">Answers quantity</string>
+    <string name="spinner_time">Time limit</string>
+    <string name="erase_button">Erase records</string>
+    <string name="erase_button_2">Erase record</string>
+    <string name="time">Time</string>
+    <string name="score">Score</string>
+    <string name="answer1">10 answers</string>
+    <string name="answer2">25 answers</string>
+    <string name="answer3">50 answers</string>
+    <string name="time1">10 seconds</string>
+    <string name="time2">30 seconds</string>
+    <string name="time3">60 seconds</string>
+</resources>
