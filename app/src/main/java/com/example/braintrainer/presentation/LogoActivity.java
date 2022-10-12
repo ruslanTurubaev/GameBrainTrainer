@@ -1,4 +1,4 @@
-package com.example.braintrainer;
+package com.example.braintrainer.presentation;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+
+import com.example.braintrainer.R;
 
 public class LogoActivity extends Activity {
     private Animation alphaAnimation;

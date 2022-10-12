@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
+    tools:context=".presentation.MainActivity"
     android:background="@drawable/background">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -107,7 +107,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <com.example.braintrainer.CurtainView
+    <com.example.braintrainer.presentation.CurtainView
         android:id="@+id/curtain"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

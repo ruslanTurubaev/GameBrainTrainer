@@ -1,8 +1,6 @@
-package com.example.braintrainer;
+package com.example.braintrainer.presentation;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -11,29 +9,37 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
+import com.example.braintrainer.R;
+import com.example.braintrainer.data.storage.constants.Constants;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
-public class SettingsActivity extends Activity {
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
+public class SettingsActivity extends AppCompatActivity {
     private ChipGroup chipGroup;
     private Chip chipCount, chipTime;
     private RadioGroup radioGroup;
     private RadioButton radioButton1, radioButton2, radioButton3;
     private CurtainView curtain;
-    private SharedPreferences sharedPreferences;
     private boolean isGameMode1 = true;
     private boolean isButtonsBlocked = false;
+
+    private SettingsViewModel settingsViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+
         init();
     }
 
     private void init(){
-        sharedPreferences = getSharedPreferences(Constants.APP_PREFERENCES, MODE_PRIVATE);
         chipGroup = findViewById(R.id.chip_group);
         chipCount = findViewById(R.id.chip_count);
         chipTime = findViewById(R.id.chip_time);
@@ -43,82 +49,59 @@ public class SettingsActivity extends Activity {
         radioButton3 = findViewById(R.id.radioButton3);
         curtain = findViewById(R.id.curtain);
 
-        String gameMode = sharedPreferences.getString(Constants.GAME_MODE, Constants.GAME_MODE_1);
-        int index = sharedPreferences.getInt(Constants.MODE_VALUE_INDEX, 0);
-        setCheckedRadioButton(index);
+        settingsViewModel = new ViewModelProvider(this).get(SettingsViewModel.class);
 
-        if (gameMode.equals(Constants.GAME_MODE_1)){
-            chipCount.setChecked(true);
-            setRadioButtonsText(true);
-        }
-        else {
-            chipTime.setChecked(true);
-            setRadioButtonsText(false);
-        }
+        settingsViewModel.getIsChipAnswersChecked().observe(this, aBoolean -> chipCount.setChecked(aBoolean));
+        settingsViewModel.getIsChipTimeChecked().observe(this, aBoolean -> chipTime.setChecked(aBoolean));
+        settingsViewModel.getIsRadioButton1Checked().observe(this, aBoolean -> radioButton1.setChecked(aBoolean));
+        settingsViewModel.getIsRadioButton2Checked().observe(this, aBoolean -> radioButton2.setChecked(aBoolean));
+        settingsViewModel.getIsRadioButton3Checked().observe(this, aBoolean -> radioButton3.setChecked(aBoolean));
+        settingsViewModel.getRadioButtonTex1().observe(this, integer -> radioButton1.setText(integer));
+        settingsViewModel.getRadioButtonTex2().observe(this, integer -> radioButton2.setText(integer));
+        settingsViewModel.getRadioButtonTex3().observe(this, integer -> radioButton3.setText(integer));
 
         chipGroup.setOnCheckedChangeListener(new ChipGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(ChipGroup group, int checkedId) {
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-
                 switch (checkedId){
                     case (R.id.chip_count):
-                        setRadioButtonsText(true);
-                        editor.putString(Constants.GAME_MODE, Constants.GAME_MODE_1);
+                        settingsViewModel.setGameMode(Constants.GAME_MODE_1);
                         isGameMode1 = true;
                         break;
                     case (R.id.chip_time):
-                        setRadioButtonsText(false);
-                        editor.putString(Constants.GAME_MODE, Constants.GAME_MODE_2);
+                        settingsViewModel.setGameMode(Constants.GAME_MODE_2);
                         isGameMode1 = false;
                         break;
                     default:
                         if(isGameMode1){
-                            chipTime.setChecked(true);
+                            settingsViewModel.setGameMode(Constants.GAME_MODE_2);
                         }
                         else {
-                            chipCount.setChecked(true);
+                            settingsViewModel.setGameMode(Constants.GAME_MODE_1);
                         }
                 }
-                editor.apply();
             }
         });
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                int index = 0;
                 switch (i){
                     case (R.id.radioButton1):
-                        index = 0;
+                        settingsViewModel.setModeValueIndex(0);
                         break;
                     case (R.id.radioButton2):
-                        index = 1;
+                        settingsViewModel.setModeValueIndex(1);
                         break;
                     case (R.id.radioButton3):
-                        index = 2;
-                        break;
-                    default:
-                        index = 0;
-                        radioGroup.check(R.id.radioButton1);
+                        settingsViewModel.setModeValueIndex(2);
                 }
-                editor.putInt(Constants.MODE_VALUE_INDEX, index);
-                editor.apply();
             }
         });
     }
 
     public void onClickErase(View view) {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt(Constants.ANSWERS_10_RECORD, Integer.MAX_VALUE);
-        editor.putInt(Constants.ANSWERS_25_RECORD, Integer.MAX_VALUE);
-        editor.putInt(Constants.ANSWERS_50_RECORD, Integer.MAX_VALUE);
-        editor.putInt(Constants.TIME_10_RECORD, 0);
-        editor.putInt(Constants.TIME_30_RECORD, 0);
-        editor.putInt(Constants.TIME_60_RECORD, 0);
-        editor.apply();
-
+        settingsViewModel.eraseAllRecords();
         Toast.makeText(this, "All records have been erased", Toast.LENGTH_SHORT).show();
     }
 
@@ -136,31 +119,5 @@ public class SettingsActivity extends Activity {
             }, curtain.getAnimationDuration());
         }
 
-    }
-
-    private void setRadioButtonsText(boolean isGameMode1){
-        if (isGameMode1){
-            radioButton1.setText(R.string.answer1);
-            radioButton2.setText(R.string.answer2);
-            radioButton3.setText(R.string.answer3);
-        }
-        else {
-            radioButton1.setText(R.string.time1);
-            radioButton2.setText(R.string.time2);
-            radioButton3.setText(R.string.time3);
-        }
-    }
-
-    private void setCheckedRadioButton(int index){
-        switch (index){
-            case 0:
-                radioButton1.setChecked(true);
-                break;
-            case 1:
-                radioButton2.setChecked(true);
-                break;
-            case 2:
-                radioButton3.setChecked(true);
-        }
     }
 }

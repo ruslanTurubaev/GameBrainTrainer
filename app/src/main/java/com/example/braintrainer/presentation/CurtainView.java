@@ -1,4 +1,4 @@
-package com.example.braintrainer;
+package com.example.braintrainer.presentation;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.animation.LinearInterpolator;
 
 import androidx.annotation.Nullable;
+
+import com.example.braintrainer.R;
 
 public class CurtainView extends View {
     private static final int ANIMATION_DURATION = 700;

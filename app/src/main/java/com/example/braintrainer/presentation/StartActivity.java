@@ -1,4 +1,4 @@
-package com.example.braintrainer;
+package com.example.braintrainer.presentation;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -7,6 +7,8 @@ import android.os.Handler;
 import android.view.View;
 
 import androidx.annotation.Nullable;
+
+import com.example.braintrainer.R;
 
 public class StartActivity extends Activity {
     private boolean isButtonsBlocked = false;
